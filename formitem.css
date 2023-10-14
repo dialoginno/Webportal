@@ -1,0 +1,34 @@
+/* Add spacing between form items */
+.form-item {
+    margin-bottom: 5px;
+}
+
+/* Add spacing between label and input elements */
+.form-item label {
+    margin-bottom: 5px;
+}
+
+/* Add spacing between radio buttons in the rating section */
+.form-item input[type="radio"] {
+    margin-right: 10px;
+}
+
+/* Add spacing between the category select and the selected options */
+.multiselect {
+    margin-bottom: 15px;
+}
+
+/* Add spacing between selected options and the "Clear" button */
+.selected-options {
+    margin-bottom: 10px;
+}
+
+/* Add spacing between buttons in the last form item */
+.form-item button {
+    margin-right: 10px;
+}
+
+/* Increase the overall padding of the popup content */
+.popup-content {
+    padding: 20px;
+}

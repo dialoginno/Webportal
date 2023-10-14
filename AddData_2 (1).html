@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Page with Add and Edit</title>
+<link rel="stylesheet" type="text/css" href="button.css">
+<link rel="stylesheet" type="text/css" href="popup.css">
+<link rel="stylesheet" type="text/css" href="table.css">
+<link rel="stylesheet" type="text/css" href="formitem.css">
+    <style>
+        /* Basic CSS for styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;`  
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1500;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            height: inherit;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+        .multiselect {
+            position: relative;
+            display: inline-block;
+        }
+        .select-box {
+            width: 100%;
+            border: 1px solid #ccc;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .selected-options {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+        .selected-option {
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 2px 5px;
+            margin-right: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .selected-option span {
+            margin-right: 3px;
+            cursor: pointer;
+        }
+        .optional-section {
+            display: none;
+        }
+        .optional-section.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add location</h1>
+        
+        <!-- Add Button -->
+        <button class="btn" onclick="openPopup()">Add Location</button>
+
+        <!-- Display List -->
+        <table class="table-wrapper" id="dataList">
+            <thead>
+                <tr>
+                    <th>Location Name</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Province</th>
+                    <th>Latitude (°E)</th>
+                    <th>Longitude (°N)</th>
+                    <th>Rating</th>
+                    <th>Category</th>
+                    <th>Open Hours</th>
+                    <th>Ticket Price</th>
+                    <th>Description</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Popup Form -->
+    <div class="form-popup" id="addPopup">
+    <div class="popup-content">
+        <span class="close-button" onclick="closePopup()">&#10006;</span>
+        <h2 style="color: black;">Add Location</h2>
+        <div class="form-item">
+            <label for="locationName">Location Name:</label>
+            <input type="text" id="locationName" required>
+        </div>
+        <div class="form-item">
+            <label for="address">Address:</label>
+            <input type="text" id="address" required>
+        </div>
+        <div class="form-item">
+            <label for="city">City:</label>
+            <input type="text" id="city" required>
+        </div>
+        <div class="form-item">
+            <label for="province">Province:</label>
+            <input type="text" id="province" required>
+        </div>
+        <div class="form-item">
+            <label for="latitude">Latitude (°E):</label>
+            <input type="number" step="0.0001" id="latitude" required>
+        </div>
+        <div class="form-item">
+            <label for="longitude">Longitude (°N):</label>
+            <input type="number" step="0.0001" id="longitude" required>
+        </div>
+        <div class="form-item">
+            <label for="rating">Rating:</label>
+            <input type="radio" name="ratingOption" value="enabled" onclick="showOptionalSection()"> Enable
+            <input type="radio" name="ratingOption" value="disabled" checked onclick="hideOptionalSection()"> Disable
+        </div>
+        <div class="optional-section">
+            <div class="form-item">
+                <label for="rating">Rating (0-10):</label>
+                <input type="number" step="0.1" id="rating" placeholder="Rating (0-10)">
+            </div>
+        </div>
+        <div class="form-item">
+            <label for="category">Category:</label>
+            <div class="multiselect">
+                <select id="category" multiple>
+                    <option value="Worship">Worship</option>
+                    <option value="Temple">Temple</option>
+                    <option value="Sight seeing">Sight seeing</option>
+                    <option value="Hike">Hike</option>
+                    <option value="Nature">Nature</option>
+                    <option value="Heritage site">Heritage site</option>
+                    <option value="Beach">Beach</option>
+                    <option value="Surf">Surf</option>
+                    <option value="Camp">Camp</option>
+                    <option value="Music">Music</option>
+                    <option value="Waterfall">Waterfall</option>
+                    <option value="Museum">Museum</option>
+                    <option value="Street food">Street food</option>
+                    <option value="Park">Park</option>
+                    <option value="Zoo">Zoo</option>
+                    <option value="Water rides">Water rides</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Snorkeling">Snorkeling</option>
+                    <option value="Conventions">Conventions</option>
+                    <option value="Musical shows">Musical shows</option>
+                    <option value="Exhibitions">Exhibitions</option>
+                </select>
+            </div>
+            <div class="selected-options" id="selectedCategories"></div>
+            <button onclick="clearCategorySelection()">Clear</button>
+        </div>
+        <div class="form-item">
+            <label for="openHoursFrom">Open Hours (From):</label>
+            <input type="time" id="openHoursFrom" required>
+        </div>
+        <div class="form-item">
+            <label for="openHoursTo">Open Hours (To):</label>
+            <input type="time" id="openHoursTo" required>
+        </div>
+        <div class="form-item">
+            <label for="ticketPrice">Entry Ticket Price:</label>
+            <input type="number" step="0.01" id="ticketPrice" required>
+        </div>
+        <div class="form-item">
+            <label for="description">Description of Location:</label>
+            <textarea id="description" required></textarea>
+        </div>
+        <div class="form-item">
+            <button onclick="addItem()">Add</button>
+            <button onclick="clearForm()">Clear</button>
+        </div>
+    </div>
+ </div>
+    
+    <!-- Edit Popup -->
+    <div class="form-popup" id="editPopup">
+        <div class="popup-content">
+            <!--<button onclick="editItem(0)">edit</button>-->
+            <span class="close-button" onclick="closeEditPopup()">&#10006;</span>
+            <h2 style="color: black;">Edit Location</h2>
+            <input type="hidden" id="editIndex">
+            <div class="form-item">
+                <label for="editLocationName">Location Name:</label>
+                <input type="text" id="editLocationName"><br>
+            </div>
+            <div class="form-item">
+                <label for="editAddress">Address:</label>
+                <input type="text" id="editAddress"><br>
+            </div>
+            <div class="form-item">
+                <label for="editCity">City:</label>
+                <input type="text" id="editCity"><br>
+            </div>
+            <div class="form-item">
+                <label for="editProvince">Province:</label>
+                <input type="text" id="editProvince"><br>
+            </div>
+            <div class="form-item">
+                <label for="editLatitude">Latitude (°E):</label>
+                <input type="number" step="0.0001" id="editLatitude"><br>
+            </div>
+            <div class="form-item">
+                <label for="editLongitude">Longitude (°N):</label>
+                <input type="number" step="0.0001" id="editLongitude"><br>
+            </div>
+            <div class="form-item">
+                <label for="editRating">Rating:</label>
+                <input type="radio" name="ratingOption" value="enabled" onclick="showOptionalSection()"> Enable
+                <input type="radio" name="ratingOption" value="disabled" checked onclick="hideOptionalSection()"> Disable
+             </div>
+             <div class="optional-section">
+                <div class="form-item">
+                    <label for="editRating">Rating (0-10):</label>
+                    <input type="number" step="0.1" id="editRating" placeholder="Rating (0-10)">
+                </div>
+            </div>
+            <div class="form-item">
+                <label for="editCategory">Category:</label>
+                <div class="multiselect">
+                    <select id="editCategory" multiple>
+                        <option value="Worship">Worship</option>
+                        <option value="Temple">Temple</option>
+                        <option value="Sight seeing">Sight seeing</option>
+                        <option value="Hike">Hike</option>
+                        <option value="Nature">Nature</option>
+                        <option value="Heritage site">Heritage site</option>
+                        <option value="Beach">Beach</option>
+                        <option value="Surf">Surf</option>
+                        <option value="Camp">Camp</option>
+                        <option value="Music">Music</option>
+                        <option value="Waterfall">Waterfall</option>
+                        <option value="Museum">Museum</option>
+                        <option value="Street food">Street food</option>
+                        <option value="Park">Park</option>
+                        <option value="Zoo">Zoo</option>
+                        <option value="Water rides">Water rides</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Snorkeling">Snorkeling</option>
+                        <option value="Conventions">Conventions</option>
+                        <option value="Musical shows">Musical shows</option>
+                        <option value="Exhibitions">Exhibitions</option>
+                    </select>
+                </div>
+                <div class="selected-options" id="editSelectedCategories"></div>
+                <button onclick="clearEditCategorySelection()">Clear</button>
+            </div>
+            <div class="form-item">
+                <label for="editOpenHoursFrom">Open Hours (From):</label>
+                <input type="time" id="editOpenHoursFrom">
+            </div>
+            <div class="form-item">
+                <label for="editOpenHoursTo">Open Hours (To):</label>
+                <input type="time" id="editOpenHoursTo"><br>
+            </div>
+            <div class="form-item">
+                <label for="editTicketPrice">Entry Ticket Price:</label>
+                <input type="number" step="0.01" id="editTicketPrice"><br>
+            </div>
+            <div class="form-item">
+                <label for="editDescription">Description of Location:</label>
+                <textarea id="editDescription"></textarea><br>
+            </div>
+            <div class="form-item">
+                <button onclick="updateItem()">Update</button>
+            </div>
+        </div>
+    </div>
+
+   <script>
+        // JavaScript code to manage the popup and add/edit items
+        let data = [];
+
+        function openPopup() {
+            document.getElementById("addPopup").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("addPopup").style.display = "none";
+            clearForm();
+        }
+
+        function showOptionalSection() {
+            const optionalSection = document.querySelector(".optional-section");
+            optionalSection.style.display = "block";
+        }
+
+        function hideOptionalSection() {
+            const optionalSection = document.querySelector(".optional-section");
+            optionalSection.style.display = "none";
+        }
+
+        function addItem() {
+            const locationName = document.getElementById("locationName").value;
+            const address = document.getElementById("address").value;
+            const city = document.getElementById("city").value;
+            const province = document.getElementById("province").value;
+            const latitude = parseFloat(document.getElementById("latitude").value);
+            const longitude = parseFloat(document.getElementById("longitude").value);
+            const ratingOption = document.querySelector('input[name="ratingOption"]:checked').value;
+            const rating = ratingOption === "enabled" ? parseFloat(document.getElementById("rating").value) : null;
+            const openHoursFrom = document.getElementById("openHoursFrom").value;
+            const openHoursTo = document.getElementById("openHoursTo").value;
+            const ticketPrice = parseFloat(document.getElementById("ticketPrice").value);
+            const description = document.getElementById("description").value;
+            const category = Array.from(document.getElementById("category").selectedOptions).map(option => option.value);
+
+            if (
+                locationName.trim() !== "" &&
+                address.trim() !== "" &&
+                city.trim() !== "" &&
+                province.trim() !== "" &&
+                !isNaN(latitude) &&
+                !isNaN(longitude) &&
+                (ratingOption === "disabled" || (!isNaN(rating) && rating >= 0 && rating <= 10)) &&
+                category.length > 0 &&
+                openHoursFrom.trim() !== "" &&
+                openHoursTo.trim() !== "" &&
+                !isNaN(ticketPrice) &&
+                description.trim() !== ""
+            ) {
+                const locationData = {
+                    locationName,
+                    address,
+                    city,
+                    province,
+                    latitude,
+                    longitude,
+                    rating,
+                    category,
+                    openHours: `${openHoursFrom} - ${openHoursTo}`,
+                    ticketPrice,
+                    description
+                };
+
+                data.push(locationData);
+                closePopup();
+                updateTable();
+                clearForm();
+            }
+        }
+
+        function editItem(index) {
+            openEditPopup();
+            const item = data[index];
+            document.getElementById("editLocationName").value = item.locationName;
+            document.getElementById("editAddress").value = item.address;
+            document.getElementById("editCity").value = item.city;
+            document.getElementById("editProvince").value = item.province;
+            document.getElementById("editLatitude").value = item.latitude;
+            document.getElementById("editLongitude").value = item.longitude;
+            if (item.rating !== null) {
+                document.querySelector('input[name="editRatingOption"][value="enabled"]').checked = true;
+                document.getElementById("editRating").value = item.rating;
+                showEditOptionalSection();
+            } else {
+                document.querySelector('input[name="editRatingOption"][value="disabled"]').checked = true;
+                hideEditOptionalSection();
+            }
+            document.getElementById("editCategory").value = item.category;
+            const openHours = item.openHours.split(" - ");
+            document.getElementById("editOpenHoursFrom").value = openHours[0];
+            document.getElementById("editOpenHoursTo").value = openHours[1];
+            document.getElementById("editTicketPrice").value = item.ticketPrice;
+            document.getElementById("editDescription").value = item.description;
+
+            document.getElementById("editIndex").value = index;
+            document.getElementById("editPopup").style.display = "block";
+
+            // Display selected categories
+            const selectedCategories = document.getElementById("editSelectedCategories");
+            selectedCategories.innerHTML = "";
+            item.category.forEach(cat => {
+                const selectedOption = document.createElement("div");
+                selectedOption.className = "selected-option";
+                selectedOption.innerHTML = `${cat} <span onclick="removeEditCategory('${cat}')">&#10006;</span>`;
+                selectedCategories.appendChild(selectedOption);
+            });       
+        }
+
+        function clearCategorySelection() {
+            const categorySelect = document.getElementById("category");
+            categorySelect.selectedIndex = -1;
+            updateSelectedCategories();
+        }
+
+        function clearEditCategorySelection() {
+            const editCategorySelect = document.getElementById("editCategory");
+            editCategorySelect.selectedIndex = -1;
+            updateEditSelectedCategories();
+        }
+
+        function removeEditCategory(category) {
+            const editCategorySelect = document.getElementById("editCategory");
+            const optionToRemove = Array.from(editCategorySelect.options).find(option => option.value === category);
+            if (optionToRemove) {
+                optionToRemove.selected = false;
+            }
+            updateEditSelectedCategories();
+        }
+
+        function updateSelectedCategories() {
+            const categorySelect = document.getElementById("category");
+            const selectedCategories = document.getElementById("selectedCategories");
+            selectedCategories.innerHTML = "";
+            Array.from(categorySelect.selectedOptions).forEach(option => {
+                const selectedOption = document.createElement("div");
+                selectedOption.className = "selected-option";
+                selectedOption.innerHTML = `${option.value} <span onclick="removeCategory('${option.value}')">&#10006;</span>`;
+                selectedCategories.appendChild(selectedOption);
+            });
+        }
+
+        function removeCategory(category) {
+            const categorySelect = document.getElementById("category");
+            const optionToRemove = Array.from(categorySelect.options).find(option => option.value === category);
+            if (optionToRemove) {
+                optionToRemove.selected = false;
+            }
+            updateSelectedCategories();
+        }
+
+        function updateEditSelectedCategories() {
+            const editCategorySelect = document.getElementById("editCategory");
+            const selectedCategories = document.getElementById("editSelectedCategories");
+            selectedCategories.innerHTML = "";
+            Array.from(editCategorySelect.selectedOptions).forEach(option => {
+                const selectedOption = document.createElement("div");
+                selectedOption.className = "selected-option";
+                selectedOption.innerHTML = `${option.value} <span onclick="removeEditCategory('${option.value}')">&#10006;</span>`;
+                selectedCategories.appendChild(selectedOption);
+            });
+        }
+        function openEditPopup() {
+            document.getElementById("editPopup").style.display = "block";
+        }
+        function closeEditPopup() {
+            document.getElementById("editPopup").style.display = "none";
+            clearEditForm();
+        }
+
+        function showEditOptionalSection() {
+            const optionalSection = document.querySelector(".edit-optional-section");
+            optionalSection.style.display = "block";
+        }
+
+        function hideEditOptionalSection() {
+            const optionalSection = document.querySelector(".edit-optional-section");
+            optionalSection.style.display = "none";
+        }
+
+        function updateItem() {
+            const index = document.getElementById("editIndex").value;
+            const locationName = document.getElementById("editLocationName").value;
+            const address = document.getElementById("editAddress").value;
+            const city = document.getElementById("editCity").value;
+            const province = document.getElementById("editProvince").value;
+            const latitude = parseFloat(document.getElementById("editLatitude").value);
+            const longitude = parseFloat(document.getElementById("editLongitude").value);
+            const ratingOption = document.querySelector('input[name="editRatingOption"]:checked').value;
+            const rating = ratingOption === "enabled" ? parseFloat(document.getElementById("editRating").value) : null;
+            const category = Array.from(document.getElementById("editCategory").selectedOptions).map(option => option.value);
+            const openHoursFrom = document.getElementById("editOpenHoursFrom").value;
+            const openHoursTo = document.getElementById("editOpenHoursTo").value;
+            const ticketPrice = parseFloat(document.getElementById("editTicketPrice").value);
+            const description = document.getElementById("editDescription").value;
+
+            if (
+                locationName.trim() !== "" &&
+                address.trim() !== "" &&
+                city.trim() !== "" &&
+                province.trim() !== "" &&
+                !isNaN(latitude) &&
+                !isNaN(longitude) &&
+                (ratingOption === "disabled" || (!isNaN(rating) && rating >= 0 && rating <= 10)) &&
+                category.length > 0 &&
+                openHoursFrom.trim() !== "" &&
+                openHoursTo.trim() !== "" &&
+                !isNaN(ticketPrice) &&
+                description.trim() !== ""
+            ) {
+                const locationData = {
+                    locationName,
+                    address,
+                    city,
+                    province,
+                    latitude,
+                    longitude,
+                    rating,
+                    category,
+                    openHours: `${openHoursFrom} - ${openHoursTo}`,
+                    ticketPrice,
+                    description
+                };
+
+                data[index] = locationData;
+                closeEditPopup();
+                updateTable();
+                clearEditForm();
+            }
+        }
+
+        function deleteItem(index) {
+            if (index >= 0 && index < data.length) {
+                data.splice(index, 1);
+                updateTable();
+            }
+        }
+
+        function updateTable() {
+            const tableBody = document.querySelector("#dataList tbody");
+            tableBody.innerHTML = "";
+
+            data.forEach((item, index) => {
+                const row = tableBody.insertRow();
+
+                for (let key in item) {
+                    if (item.hasOwnProperty(key)) {
+                        const cell = row.insertCell();
+                        if (key === "category") {
+                            cell.textContent = item[key].join(', ');
+                        } else {
+                            cell.textContent = item[key];
+                        }
+                    }
+                }
+
+                const editCell = row.insertCell();
+                const editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.onclick = () => editItem(index);
+                editCell.appendChild(editButton);
+
+                const deleteCell = row.insertCell();
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = () => deleteItem(index);
+                deleteCell.appendChild(deleteButton);
+            });
+        }
+
+        function clearForm() {
+            document.getElementById("locationName").value = "";
+            document.getElementById("address").value = "";
+            document.getElementById("city").value = "";
+            document.getElementById("province").value = "";
+            document.getElementById("latitude").value = "";
+            document.getElementById("longitude").value = "";
+            document.querySelector('input[name="ratingOption"][value="disabled"]').checked = true;
+            hideOptionalSection();
+            document.getElementById("rating").value = "";
+            document.getElementById("category").value = "";
+            clearCategorySelection();
+            document.getElementById("openHoursFrom").value = "";
+            document.getElementById("openHoursTo").value = "";
+            document.getElementById("ticketPrice").value = "";
+            document.getElementById("description").value = "";
+        }
+
+        function clearEditForm() {
+            document.getElementById("editLocationName").value = "";
+            document.getElementById("editAddress").value = "";
+            document.getElementById("editCity").value = "";
+            document.getElementById("editProvince").value = "";
+            document.getElementById("editLatitude").value = "";
+            document.getElementById("editLongitude").value = "";
+            document.querySelector('input[name="editRatingOption"][value="disabled"]').checked = true;
+            hideEditOptionalSection();
+            document.getElementById("editRating").value = "";
+            document.getElementById("editCategory").value = "";
+            clearEditCategorySelection();
+            document.getElementById("editOpenHoursFrom").value = "";
+            document.getElementById("editOpenHoursTo").value = "";
+            document.getElementById("editTicketPrice").value = "";
+            document.getElementById("editDescription").value = "";
+        }
+    </script>
+</body>
+</html>
